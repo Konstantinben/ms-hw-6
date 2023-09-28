@@ -1,0 +1,90 @@
+version: '3.5'
+
+networks:
+  net-hw-4:
+
+services:
+  grafana:
+    container_name: grafana-ms-hw-6
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    volumes:
+      - ./volumes/grafana:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - net-hw-4
+
+  prometheus:
+    container_name: prometheus-ms-hw-6
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks:
+      - net-hw-4
+
+  postgres:
+    container_name: postgres-ms-hw-6
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./volumes/postgres/:/var/lib/postgresql/data
+    networks:
+      - net-hw-4
+    expose:
+      - "5432"
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  postgres-exporter:
+    container_name: pg-exporter-ms-hw-6
+    image: prometheuscommunity/postgres-exporter
+    ports:
+      - 9187:9187
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:pass@postgres:5432/postgres?sslmode=disable"
+    networks:
+      - net-hw-4
+    links:
+      - postgres
+      - prometheus
+
+  node_exporter:
+    container_name: node_exporter-ms-hw-6
+    image: quay.io/prometheus/node-exporter:latest
+    ports:
+      - 9100:9100
+    command:
+      - '--path.rootfs=/host'
+    networks:
+      - net-hw-4
+    #network_mode: host
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - './volumes/node_exporter/:/host:ro,rslave'
+
+  nginx:
+    build:
+      context: nginx
+      dockerfile: Dockerfile
+    image: kpolyanichko/ms-hw-6-amd64-nginx
+    container_name: nginx-ms-hw-6
+    restart: on-failure
+    ports:
+      - "80:80"
+    networks:
+      - net-hw-4

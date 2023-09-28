@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: app-service
+  labels:
+    app: app-service
+    release: prom
+spec:
+  endpoints:
+    - port: http
+      path: '/actuator/prometheus'
+      scheme: http
+      interval: 5s
+  namespaceSelector:
+    matchNames:
+      - default
+  selector:
+    matchLabels:
+      app: app-service
+      release: prom
