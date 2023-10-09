@@ -1,13 +1,13 @@
 {
 	"info": {
-		"_postman_id": "ad6096ec-9eec-488c-a10b-4739d2682a43",
-		"name": "ms-hw-6  arch.homework",
+		"_postman_id": "ed771129-74d5-43f7-9d2a-346ac65ad55c",
+		"name": "ms-hw-7 local",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "5562917"
 	},
 	"item": [
 		{
-			"name": "/auth - Регистрация пользователя 1",
+			"name": "/auth - Signup",
 			"event": [
 				{
 					"listen": "test",
@@ -25,8 +25,7 @@
 							"\r",
 							"let jsonResponseData= pm.response.json();\r",
 							"console.log\r",
-							"console.log('Response: ' + JSON.stringify(jsonResponseData))\r",
-							""
+							"console.log('Response: ' + JSON.stringify(jsonResponseData))"
 						],
 						"type": "text/javascript"
 					}
@@ -43,8 +42,7 @@
 							"  let rand2 = Math.random() * 100000;\r",
 							"  rand2 = Math.floor(rand2);\r",
 							"  console.log('Index2' + rand2);\r",
-							"  pm.collectionVariables.set(\"index2\", rand2);\r",
-							"  "
+							"  pm.collectionVariables.set(\"index2\", rand2);"
 						],
 						"type": "text/javascript"
 					}
@@ -66,13 +64,13 @@
 					}
 				},
 				"url": {
-					"raw": "http://{{baseUrl}}/auth/signup",
+					"raw": "http://localhost:8087/signup",
 					"protocol": "http",
 					"host": [
-						"{{baseUrl}}"
+						"localhost"
 					],
+					"port": "8087",
 					"path": [
-						"auth",
 						"signup"
 					]
 				}
@@ -80,58 +78,7 @@
 			"response": []
 		},
 		{
-			"name": "/user - Проверка, что изменение и получение профиля пользователя недоступно без токена",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"let jsonRequestData= pm.request.body.raw;\r",
-							"console.log\r",
-							"console.log('Request: ' + jsonRequestData)\r",
-							"\r",
-							"let jsonResponseData= pm.response.json();\r",
-							"console.log\r",
-							"console.log('Response: ' + JSON.stringify(jsonResponseData))"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://{{baseUrl}}/user/{{accountId}}",
-					"protocol": "http",
-					"host": [
-						"{{baseUrl}}"
-					],
-					"path": [
-						"user",
-						"{{accountId}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "/auth - Вход пользователя 1",
+			"name": "/auth - Login",
 			"event": [
 				{
 					"listen": "test",
@@ -171,13 +118,13 @@
 					}
 				},
 				"url": {
-					"raw": "http://{{baseUrl}}/auth/login",
+					"raw": "http://localhost:8087/login",
 					"protocol": "http",
 					"host": [
-						"{{baseUrl}}"
+						"localhost"
 					],
+					"port": "8087",
 					"path": [
-						"auth",
 						"login"
 					]
 				}
@@ -185,17 +132,59 @@
 			"response": []
 		},
 		{
-			"name": "/user/ Изменение профиля пользователя 1",
+			"name": "/warehouse/items Get Warehouse Items",
 			"event": [
 				{
-					"listen": "prerequest",
+					"listen": "test",
 					"script": {
 						"exec": [
+							"let jsonRequestData= pm.request.body.raw;\r",
+							"console.log\r",
+							"console.log('Request: ' + jsonRequestData)\r",
+							"\r",
+							"let eTagHeader = pm.response.headers.get('ETag');\r",
+							"console.log('Response ETag Header: ' + eTagHeader);\r",
+							"pm.collectionVariables.set(\"etag\", eTagHeader);\r",
+							"\r",
+							"let jsonResponseData= pm.response.json();\r",
+							"console.log\r",
+							"console.log('Response: ' + JSON.stringify(jsonResponseData))\r",
 							""
 						],
 						"type": "text/javascript"
 					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
 				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8085/warehouse/items",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8085",
+					"path": [
+						"warehouse",
+						"items"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/order/ Create Order",
+			"event": [
 				{
 					"listen": "test",
 					"script": {
@@ -206,7 +195,8 @@
 							"\r",
 							"let jsonResponseData= pm.response.json();\r",
 							"console.log\r",
-							"console.log('Response: ' + JSON.stringify(jsonResponseData))"
+							"console.log('Response: ' + JSON.stringify(jsonResponseData))\r",
+							"pm.collectionVariables.set(\"order1Uuid\", ''+jsonResponseData.orderUuid);"
 						],
 						"type": "text/javascript"
 					}
@@ -219,15 +209,19 @@
 				"method": "PUT",
 				"header": [
 					{
-						"warning": "This is a duplicate header and will be overridden by the Authorization header generated by Postman.",
 						"key": "Authorization",
 						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "If-Match",
+						"value": "{{etag}}",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"username\": \"username_new{{index1}}\",\r\n    \"email\": \"new{{index1}}@new.ru\",\r\n    \"firstName\": \"fl_new\",\r\n    \"lastName\": \"ll_new\",\r\n    \"phone\": \"+7-100-200-30-40\",    \r\n    \"birthdate\": \"1923-01-01\",\r\n    \"gender\": \"M\",\r\n    \"city\": \"SPB\",\r\n    \"information\": \"lalala\"\r\n}",
+					"raw": "{\r\n    \"items\": [\r\n        {\r\n            \"itemUuid\": \"{{item1Uuid}}\",\r\n            \"quantity\": 10\r\n        },\r\n        {\r\n            \"itemUuid\": \"{{item2Uuid}}\",\r\n            \"quantity\": 10\r\n        },\r\n        {\r\n            \"itemUuid\": \"{{item3Uuid}}\",\r\n            \"quantity\": 10\r\n        }\r\n    ]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -235,21 +229,22 @@
 					}
 				},
 				"url": {
-					"raw": "http://{{baseUrl}}/user/{{accountId}}",
+					"raw": "http://localhost:8085/order/",
 					"protocol": "http",
 					"host": [
-						"{{baseUrl}}"
+						"localhost"
 					],
+					"port": "8085",
 					"path": [
-						"user",
-						"{{accountId}}"
+						"order",
+						""
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "/user - Проверка, что профиль поменялся",
+			"name": "/order/Get Order",
 			"event": [
 				{
 					"listen": "test",
@@ -280,176 +275,16 @@
 						"key": "Authorization",
 						"value": "{{token}}",
 						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://{{baseUrl}}/user/{{accountId}}",
-					"protocol": "http",
-					"host": [
-						"{{baseUrl}}"
-					],
-					"path": [
-						"user",
-						"{{accountId}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "/auth - Регистрация пользователя 2",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"let jsonData= pm.response.json();\r",
-							"console.log(\"accountId2 is \" + jsonData.accountId);\r",
-							"if(typeof jsonData.accountId !== \"undefined\") {\r",
-							"pm.collectionVariables.set(\"accountId2\", jsonData.accountId);\r",
-							"}\r",
-							"\r",
-							"let jsonRequestData= pm.request.body.raw;\r",
-							"console.log\r",
-							"console.log('Request: ' + jsonRequestData)\r",
-							"\r",
-							"let jsonResponseData= pm.response.json();\r",
-							"console.log\r",
-							"console.log('Response: ' + JSON.stringify(jsonResponseData))"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n        \"email\": \"new{{index2}}@new.ru\",\r\n        \"password\": \"new\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://{{baseUrl}}/auth/signup",
-					"protocol": "http",
-					"host": [
-						"{{baseUrl}}"
-					],
-					"path": [
-						"auth",
-						"signup"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "/auth - Вход пользователя 2",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"let jsonData= pm.response.json();\r",
-							"console.log(\"token2 is \" + jsonData.token);\r",
-							"if(typeof jsonData.token !== \"undefined\") {\r",
-							"pm.collectionVariables.set(\"token2\", jsonData.token);\r",
-							"}\r",
-							"\r",
-							"let jsonRequestData= pm.request.body.raw;\r",
-							"console.log\r",
-							"console.log('Request: ' + jsonRequestData)\r",
-							"\r",
-							"let jsonResponseData= pm.response.json();\r",
-							"console.log\r",
-							"console.log('Response: ' + JSON.stringify(jsonResponseData))"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n        \"email\": \"new{{index2}}@new.ru\",\r\n        \"password\": \"new\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://{{baseUrl}}/auth/login",
-					"protocol": "http",
-					"host": [
-						"{{baseUrl}}"
-					],
-					"path": [
-						"auth",
-						"login"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "/user - Проверка, пользователь 2 не имеет доступа на чтение профиля пользователя 1",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"let jsonRequestData= pm.request.body.raw;\r",
-							"console.log\r",
-							"console.log('Request: ' + jsonRequestData)\r",
-							"\r",
-							"let jsonResponseData= pm.response.json();\r",
-							"console.log\r",
-							"console.log('Response: ' + JSON.stringify(jsonResponseData))"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "GET",
-				"header": [
+					},
 					{
-						"key": "Authorization",
-						"value": "{{token2}}",
+						"key": "If-Match",
+						"value": "{{etag}}",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "",
+					"raw": "{\r\n    \"items\": [\r\n        {\r\n            \"itemUuid\": \"7981a5ad-d6c2-4f52-b821-6680b9f2c09c\",\r\n            \"quantity\": 10\r\n        },\r\n        {\r\n            \"itemUuid\": \"c9ecb61a-0f70-427f-844a-9fa41e65391f\",\r\n            \"quantity\": 10\r\n        },\r\n        {\r\n            \"itemUuid\": \"e558a3ac-e020-44c4-b6a2-90089285a344\",\r\n            \"quantity\": 10\r\n        }\r\n    ]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -457,31 +292,23 @@
 					}
 				},
 				"url": {
-					"raw": "http://{{baseUrl}}/user/{{accountId}}",
+					"raw": "http://localhost:8085/order/{{order1Uuid}}",
 					"protocol": "http",
 					"host": [
-						"{{baseUrl}}"
+						"localhost"
 					],
+					"port": "8085",
 					"path": [
-						"user",
-						"{{accountId}}"
+						"order",
+						"{{order1Uuid}}"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "/user/ Проверка, пользователь 2 не имеет доступа на редактирование профиля пользователя 1",
+			"name": "/order/ Unsuccessful Attempt to create Order with same Etag",
 			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"exec": [
-							""
-						],
-						"type": "text/javascript"
-					}
-				},
 				{
 					"listen": "test",
 					"script": {
@@ -492,7 +319,8 @@
 							"\r",
 							"let jsonResponseData= pm.response.json();\r",
 							"console.log\r",
-							"console.log('Response: ' + JSON.stringify(jsonResponseData))"
+							"console.log('Response: ' + JSON.stringify(jsonResponseData))\r",
+							"pm.collectionVariables.set(\"order1Uuid\", ''+jsonResponseData.orderUuid);"
 						],
 						"type": "text/javascript"
 					}
@@ -506,13 +334,18 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{token2}}",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "If-Match",
+						"value": "{{etag}}",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"username\": \"username_new4\",\r\n    \"email\": \"new6@new.ru\",\r\n    \"firstName\": \"fl_new4\",\r\n    \"lastName\": \"ll_new4\",\r\n    \"phone\": \"+7-100-200-30-40\",    \r\n    \"birthdate\": \"1923-01-01\",\r\n    \"gender\": \"M\",\r\n    \"city\": \"SPB\",\r\n    \"information\": \"lalala\"\r\n}",
+					"raw": "{\r\n    \"items\": [\r\n        {\r\n            \"itemUuid\": \"{{item1Uuid}}\",\r\n            \"quantity\": 10\r\n        },\r\n        {\r\n            \"itemUuid\": \"{{item2Uuid}}\",\r\n            \"quantity\": 10\r\n        },\r\n        {\r\n            \"itemUuid\": \"{{item3Uuid}}\",\r\n            \"quantity\": 10\r\n        }\r\n    ]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -520,14 +353,127 @@
 					}
 				},
 				"url": {
-					"raw": "http://{{baseUrl}}/user/{{accountId}}",
+					"raw": "http://localhost:8085/order/",
 					"protocol": "http",
 					"host": [
-						"{{baseUrl}}"
+						"localhost"
 					],
+					"port": "8085",
 					"path": [
-						"user",
-						"{{accountId}}"
+						"order",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/warehouse/items Get Warehouse Items - new ETag",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let jsonRequestData= pm.request.body.raw;\r",
+							"console.log\r",
+							"console.log('Request: ' + jsonRequestData)\r",
+							"\r",
+							"let eTagHeader = pm.response.headers.get('ETag');\r",
+							"console.log('Response ETag Header: ' + eTagHeader);\r",
+							"pm.collectionVariables.set(\"etag\", eTagHeader);\r",
+							"\r",
+							"let jsonResponseData= pm.response.json();\r",
+							"console.log\r",
+							"console.log('Response: ' + JSON.stringify(jsonResponseData))\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8085/warehouse/items",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8085",
+					"path": [
+						"warehouse",
+						"items"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/order/ Successful creation an Order with new Etag",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let jsonRequestData= pm.request.body.raw;\r",
+							"console.log\r",
+							"console.log('Request: ' + jsonRequestData)\r",
+							"\r",
+							"let jsonResponseData= pm.response.json();\r",
+							"console.log\r",
+							"console.log('Response: ' + JSON.stringify(jsonResponseData))\r",
+							"pm.collectionVariables.set(\"order1Uuid\", ''+jsonResponseData.orderUuid);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "If-Match",
+						"value": "{{etag}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"items\": [\r\n        {\r\n            \"itemUuid\": \"{{item1Uuid}}\",\r\n            \"quantity\": 10\r\n        },\r\n        {\r\n            \"itemUuid\": \"{{item2Uuid}}\",\r\n            \"quantity\": 10\r\n        },\r\n        {\r\n            \"itemUuid\": \"{{item3Uuid}}\",\r\n            \"quantity\": 10\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8085/order/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8085",
+					"path": [
+						"order",
+						""
 					]
 				}
 			},
@@ -561,28 +507,42 @@
 			"type": "string"
 		},
 		{
-			"key": "token",
-			"value": ""
-		},
-		{
-			"key": "accountId2",
-			"value": ""
-		},
-		{
-			"key": "token2",
-			"value": ""
-		},
-		{
-			"key": "baseUrl",
-			"value": "arch.homework"
-		},
-		{
 			"key": "index1",
 			"value": ""
 		},
 		{
 			"key": "index2",
 			"value": ""
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "etag",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "item1Uuid",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "item2Uuid",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "item3Uuid",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "order1Uuid",
+			"value": "",
+			"type": "string"
 		}
 	]
 }

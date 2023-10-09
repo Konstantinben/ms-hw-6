@@ -1,6 +1,6 @@
 spring:
   application:
-    name: ms-hw-7-auth
+    name: ms-hw-7-order
   main:
     cloud-platform: kubernetes
   cloud:

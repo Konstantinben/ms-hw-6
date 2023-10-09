@@ -1,11 +1,41 @@
 version: '3.5'
 
 networks:
-  net-hw-4:
+  ms-hw-7:
+  redisnet:
 
 services:
+
+  redis:
+    container_name: redis
+    image: redis:latest
+    command: redis-server
+    volumes:
+      - ./volumes/redis/:/var/lib/redis
+      - ./volumes/redis-config/:/usr/local/etc/redis/redis.conf
+    ports:
+      - 6379:6379
+    expose:
+      - 6379
+    networks:
+      - redisnet
+
+  redis-commander:
+    container_name: redis-commander
+    image: rediscommander/redis-commander:latest
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+      - HTTP_USER=root
+      - HTTP_PASSWORD=qwerty
+    ports:
+      - 8081:8081
+    networks:
+      - redisnet
+    depends_on:
+      - redis
+
   grafana:
-    container_name: grafana-ms-hw-6
+    container_name: grafana-ms-hw-7
     image: grafana/grafana
     ports:
       - 3000:3000
@@ -15,20 +45,20 @@ services:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
     networks:
-      - net-hw-4
+      - ms-hw-7
 
   prometheus:
-    container_name: prometheus-ms-hw-6
+    container_name: prometheus-ms-hw-7
     image: prom/prometheus
     ports:
       - 9090:9090
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
     networks:
-      - net-hw-4
+      - ms-hw-7
 
   postgres:
-    container_name: postgres-ms-hw-6
+    container_name: postgres-ms-hw-7
     image: postgres
     environment:
       POSTGRES_USER: postgres
@@ -42,7 +72,7 @@ services:
     volumes:
       - ./volumes/postgres/:/var/lib/postgresql/data
     networks:
-      - net-hw-4
+      - ms-hw-7
     expose:
       - "5432"
     ports:
@@ -50,41 +80,29 @@ services:
     restart: unless-stopped
 
   postgres-exporter:
-    container_name: pg-exporter-ms-hw-6
+    container_name: pg-exporter-ms-hw-7
     image: prometheuscommunity/postgres-exporter
     ports:
       - 9187:9187
     environment:
       DATA_SOURCE_NAME: "postgresql://postgres:pass@postgres:5432/postgres?sslmode=disable"
     networks:
-      - net-hw-4
+      - ms-hw-7
     links:
       - postgres
       - prometheus
 
   node_exporter:
-    container_name: node_exporter-ms-hw-6
+    container_name: node_exporter-ms-hw-7
     image: quay.io/prometheus/node-exporter:latest
     ports:
       - 9100:9100
     command:
       - '--path.rootfs=/host'
     networks:
-      - net-hw-4
+      - ms-hw-7
     #network_mode: host
     pid: host
     restart: unless-stopped
     volumes:
       - './volumes/node_exporter/:/host:ro,rslave'
-
-  nginx:
-    build:
-      context: nginx
-      dockerfile: Dockerfile
-    image: kpolyanichko/ms-hw-6-amd64-nginx
-    container_name: nginx-ms-hw-6
-    restart: on-failure
-    ports:
-      - "80:80"
-    networks:
-      - net-hw-4
