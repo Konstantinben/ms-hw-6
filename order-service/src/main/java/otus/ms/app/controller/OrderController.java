@@ -14,6 +14,8 @@ import otus.ms.app.model.dto.OrderDto;
 import otus.ms.app.model.entity.AuthUser;
 import otus.ms.app.model.entity.Order;
 import otus.ms.app.model.exception.AccessForbiddenException;
+import otus.ms.app.model.exception.BadRequestException;
+import otus.ms.app.model.exception.ETagException;
 import otus.ms.app.model.mapper.OrderItemMapper;
 import otus.ms.app.model.mapper.OrderMapper;
 import otus.ms.app.repository.WarehouseRepository;
@@ -22,7 +24,11 @@ import otus.ms.app.service.OrderService;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 @Tag(name = "OrderController")
 @RestController
@@ -57,11 +63,30 @@ public class OrderController {
     @PutMapping("/")
     @PreAuthorize("hasAuthority('users:write')")
     @Operation(summary = "Create order")
-    public OrderDto createOrder(@RequestHeader(HttpHeaders.IF_MATCH) String warehouseHash, @RequestBody @Valid CreateOrderDto createOrderDto, HttpServletResponse response) {
+    public OrderDto createOrder(@RequestHeader(HttpHeaders.IF_MATCH) String warehouseHash, @RequestHeader Map<String, String> headers, @RequestBody @Valid CreateOrderDto createOrderDto, HttpServletResponse response) {
         AuthUser authUser = getAuthorizedUserAndCheckUuid(null);
         Order order = orderService.findExistingOrder(warehouseHash, createOrderDto, authUser);
-        if (order == null) {
-            order = orderService.createOrder(createOrderDto, warehouseHash, authUser);
+        if (order == null || !order.isConfirmed()) {
+            AtomicReference<Supplier<CompletableFuture<Void>>> rollbackActionHolder = new AtomicReference<>();
+            try {
+                order = orderService.createOrder(createOrderDto, warehouseHash, authUser, headers, rollbackActionHolder);
+            } catch (Exception e) {
+                if (e instanceof ETagException || e instanceof BadRequestException) {
+                    throw e;
+                }
+                log.error("Order creation Error", e);
+                if (order != null) {
+                    order.setConfirmed(false);
+                }
+                Supplier<CompletableFuture<Void>> rollbackActionSupplier = rollbackActionHolder.get();
+                if (rollbackActionSupplier != null) {
+                    try {
+                        rollbackActionSupplier.get().join();
+                    } catch (Exception ex) {
+                        log.error("Order creation rollback Error", e);
+                    }
+                }
+            }
         }
         OrderDto orderDto = orderMapper.toOrderDto(order);
         orderDto.setOrderItems(createOrderDto.getItems());

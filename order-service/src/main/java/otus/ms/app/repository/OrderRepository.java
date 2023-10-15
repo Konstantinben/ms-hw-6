@@ -12,5 +12,5 @@ public interface OrderRepository extends CrudRepository<Order, Long> {
 
     Optional<Order> getOrderByOrderUuid(UUID uuid);
 
-    Optional<Order> getOrderByUserUuidAndEtag(UUID userUuid, Integer etag);
+    Optional<Order> getOrderByUserUuidAndEtagAndConfirmedIsTrue(UUID userUuid, Integer etag);
 }

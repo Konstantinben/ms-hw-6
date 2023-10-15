@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: ms-hw-9-billing
+  main:
+    cloud-platform: kubernetes
+  cloud:
+    kubernetes:
+      config:
+        enabled: true
+      reload:
+        enabled: true
+        monitoring-config-maps: true
+        strategy: refresh
+        mode: event

@@ -27,4 +27,6 @@ public class WarehouseItem {
     private String itemName;
 
     private int itemQuantity;
+
+    private int price;
 }

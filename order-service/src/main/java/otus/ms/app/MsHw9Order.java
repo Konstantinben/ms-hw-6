@@ -1,13 +1,15 @@
-package otus.ms.auth;
+package otus.ms.app;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
-public class MsHw7AuthApplication {
+@EnableFeignClients
+public class MsHw9Order {
 
     public static void main(String[] args) {
-        SpringApplication.run(MsHw7AuthApplication.class, args);
+        SpringApplication.run(MsHw9Order.class, args);
     }
 
 }

@@ -38,7 +38,7 @@ logging:
     otus.ms: DEBUG
 spring:
   application:
-    name: ms-hw-7-order
+    name: ms-hw-9-order
   autoconfigure:
     exclude[0]: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
     exclude[1]: org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
@@ -79,5 +79,7 @@ app:
     expiration: 100500000
     header: Authorization
   auth-service-uri: ${AUTH_SERVICE_URI:localhost:8087}
+  billing-service-uri: ${BILLING_SERVICE_URI:localhost:8084}
+  delivery-service-uri: ${DELIVERY_SERVICE_URI:localhost:8082}
   admin-user-email: admin@mshw.com
   admin-user-uuid: 50109079-8dec-4847-868e-717c77deb881

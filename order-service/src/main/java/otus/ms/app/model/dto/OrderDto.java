@@ -11,4 +11,5 @@ public class OrderDto {
     private UUID orderUuid;
     private UUID userUuid;
     private List<OrderItemDto> orderItems = new ArrayList<>();
+    private boolean confirmed;
 }

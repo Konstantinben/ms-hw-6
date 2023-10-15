@@ -13,9 +13,9 @@ import java.util.UUID;
 public interface OrderItemRepository extends CrudRepository<OrderItem, Long> {
 
     @Modifying
-    @Query(value = "INSERT INTO public.order_item (order_id, item_id, item_uuid, quantity) " +
-            "VALUES (:orderId, :itemId, :itemUuid, :quantity)")
-    void saveOrderItem(Long orderId, Long itemId, UUID itemUuid, int quantity);
+    @Query(value = "INSERT INTO public.order_item (order_id, item_id, item_uuid, quantity, price) " +
+            "VALUES (:orderId, :itemId, :itemUuid, :quantity, :price)")
+    void saveOrderItem(Long orderId, Long itemId, UUID itemUuid, int quantity, int price);
 
     List<OrderItem> getByOrderId(Long orderId);
 }

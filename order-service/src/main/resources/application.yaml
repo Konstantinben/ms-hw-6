@@ -1,6 +1,6 @@
 spring:
   application:
-    name: ms-hw-7-order
+    name: ms-hw-9-order
   main:
     cloud-platform: kubernetes
   cloud:

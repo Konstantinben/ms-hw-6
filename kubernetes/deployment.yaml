@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: deployment-app-service
   labels: 
-    type: deployment-ms-hw-7
+    type: deployment-ms-hw-9
   annotations:
     prometheus.io/scrape: 'true'
     prometheus.io/path: '/actuator/prometheus'
@@ -20,40 +20,40 @@ spec:
         release: prom
     spec:
       containers:
-        - name: ms-hw-7-app
-          image: kpolyanichko/ms-hw-7-app-service-amd64:latest
+        - name: ms-hw-9-app
+          image: kpolyanichko/ms-hw-9-app-service-amd64:latest
           ports:
             - containerPort: 8080
           env:
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: ms-hw-7-secrets
+                  name: ms-hw-9-secrets
                   key: postgres.user
             - name: DB_PWD
               valueFrom:
                 secretKeyRef:
-                  name: ms-hw-7-secrets
+                  name: ms-hw-9-secrets
                   key: postgres.password
             - name: DB_URL
               valueFrom:
                 secretKeyRef:
-                  name: ms-hw-7-secrets
+                  name: ms-hw-9-secrets
                   key: postgres.url
             - name: ADMIN_EMAIL
               valueFrom:
                 secretKeyRef:
-                  name: ms-hw-7-secrets
+                  name: ms-hw-9-secrets
                   key: admin.user.email
             - name: ADMIN_UUID
               valueFrom:
                 secretKeyRef:
-                  name: ms-hw-7-secrets
+                  name: ms-hw-9-secrets
                   key: admin.user.uuid
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: ms-hw-7-secrets
+                  name: ms-hw-9-secrets
                   key: jwt.secret
 ---
 apiVersion : apps/v1
@@ -61,7 +61,7 @@ kind: Deployment
 metadata:
   name: deployment-auth-service
   labels:
-    type: deployment-ms-hw-7
+    type: deployment-ms-hw-9
   annotations:
     prometheus.io/scrape: 'true'
     prometheus.io/path: '/actuator/prometheus'
@@ -78,30 +78,30 @@ spec:
         release: prom
     spec:
       containers:
-        - name: ms-hw-7-app
-          image: kpolyanichko/ms-hw-7-auth-service-amd64:latest
+        - name: ms-hw-9-app
+          image: kpolyanichko/ms-hw-9-auth-service-amd64:latest
           ports:
             - containerPort: 8080
           env:
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: ms-hw-7-secrets
+                  name: ms-hw-9-secrets
                   key: postgres.user
             - name: DB_PWD
               valueFrom:
                 secretKeyRef:
-                  name: ms-hw-7-secrets
+                  name: ms-hw-9-secrets
                   key: postgres.password
             - name: DB_URL
               valueFrom:
                 secretKeyRef:
-                  name: ms-hw-7-secrets
+                  name: ms-hw-9-secrets
                   key: postgres.url
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: ms-hw-7-secrets
+                  name: ms-hw-9-secrets
                   key: jwt.secret
 ---
 apiVersion : apps/v1
@@ -109,7 +109,7 @@ kind: Deployment
 metadata:
   name: deployment-order-service
   labels:
-    type: deployment-ms-hw-7
+    type: deployment-ms-hw-9
   annotations:
     prometheus.io/scrape: 'true'
     prometheus.io/path: '/actuator/prometheus'
@@ -126,40 +126,156 @@ spec:
         release: prom
     spec:
       containers:
-        - name: ms-hw-7-order
-          image: kpolyanichko/ms-hw-7-order-service-amd64:latest
+        - name: ms-hw-9-order
+          image: kpolyanichko/ms-hw-9-order-service-amd64:latest
           ports:
             - containerPort: 8080
           env:
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: ms-hw-7-secrets
+                  name: ms-hw-9-secrets
                   key: postgres.user
             - name: DB_PWD
               valueFrom:
                 secretKeyRef:
-                  name: ms-hw-7-secrets
+                  name: ms-hw-9-secrets
                   key: postgres.password
             - name: DB_URL
               valueFrom:
                 secretKeyRef:
-                  name: ms-hw-7-secrets
+                  name: ms-hw-9-secrets
                   key: postgres.url
             - name: ADMIN_EMAIL
               valueFrom:
                 secretKeyRef:
-                  name: ms-hw-7-secrets
+                  name: ms-hw-9-secrets
                   key: admin.user.email
             - name: ADMIN_UUID
               valueFrom:
                 secretKeyRef:
-                  name: ms-hw-7-secrets
+                  name: ms-hw-9-secrets
                   key: admin.user.uuid
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: ms-hw-7-secrets
+                  name: ms-hw-9-secrets
+                  key: jwt.secret
+---
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: deployment-billing-service
+  labels:
+    type: deployment-ms-hw-9
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/path: '/actuator/prometheus'
+    prometheus.io/port: '8080'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      release: prom
+  template:
+    metadata:
+      labels:
+        app: billing-service
+        release: prom
+    spec:
+      containers:
+        - name: ms-hw-9-order
+          image: kpolyanichko/ms-hw-9-billing-service-amd64:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: ms-hw-9-secrets
+                  key: postgres.user
+            - name: DB_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: ms-hw-9-secrets
+                  key: postgres.password
+            - name: DB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: ms-hw-9-secrets
+                  key: postgres.url
+            - name: ADMIN_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: ms-hw-9-secrets
+                  key: admin.user.email
+            - name: ADMIN_UUID
+              valueFrom:
+                secretKeyRef:
+                  name: ms-hw-9-secrets
+                  key: admin.user.uuid
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: ms-hw-9-secrets
+                  key: jwt.secret
+---
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: deployment-delivery-service
+  labels:
+    type: deployment-ms-hw-9
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/path: '/actuator/prometheus'
+    prometheus.io/port: '8080'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      release: prom
+  template:
+    metadata:
+      labels:
+        app: delivery-service
+        release: prom
+    spec:
+      containers:
+        - name: ms-hw-9-order
+          image: kpolyanichko/ms-hw-9-delivery-service-amd64:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: ms-hw-9-secrets
+                  key: postgres.user
+            - name: DB_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: ms-hw-9-secrets
+                  key: postgres.password
+            - name: DB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: ms-hw-9-secrets
+                  key: postgres.url
+            - name: ADMIN_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: ms-hw-9-secrets
+                  key: admin.user.email
+            - name: ADMIN_UUID
+              valueFrom:
+                secretKeyRef:
+                  name: ms-hw-9-secrets
+                  key: admin.user.uuid
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: ms-hw-9-secrets
                   key: jwt.secret
 ---
 apiVersion: v1
@@ -218,6 +334,48 @@ metadata:
 spec:
   selector:
     app: order-service
+    release: prom
+  type: NodePort
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: billing-service
+  labels:
+    app: billing-service
+    release: prom
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/path: '/actuator/prometheus'
+    prometheus.io/port: '8080'
+spec:
+  selector:
+    app: billing-service
+    release: prom
+  type: NodePort
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: delivery-service
+  labels:
+    app: delivery-service
+    release: prom
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/path: '/actuator/prometheus'
+    prometheus.io/port: '8080'
+spec:
+  selector:
+    app: delivery-service
     release: prom
   type: NodePort
   ports:

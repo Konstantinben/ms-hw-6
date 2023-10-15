@@ -38,7 +38,7 @@ logging:
     otus.ms: DEBUG
 spring:
   application:
-    name: ms-hw-7-auth
+    name: ms-hw-9-auth
   autoconfigure:
     exclude[0]: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
     exclude[1]: org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration

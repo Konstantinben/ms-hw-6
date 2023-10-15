@@ -24,4 +24,6 @@ public class OrderItem {
     private UUID itemUuid;
 
     private int quantity;
+
+    private int price;
 }

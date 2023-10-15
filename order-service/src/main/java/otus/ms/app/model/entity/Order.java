@@ -24,4 +24,8 @@ public class Order {
     private UUID userUuid;
 
     private Integer etag;
+
+    private int totalPrice;
+
+    boolean confirmed;
 }

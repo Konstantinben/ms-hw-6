@@ -1,7 +1,7 @@
 version: '3.5'
 
 networks:
-  ms-hw-7:
+  ms-hw-9:
   redisnet:
 
 services:
@@ -35,7 +35,7 @@ services:
       - redis
 
   grafana:
-    container_name: grafana-ms-hw-7
+    container_name: grafana-ms-hw-9
     image: grafana/grafana
     ports:
       - 3000:3000
@@ -45,20 +45,20 @@ services:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
     networks:
-      - ms-hw-7
+      - ms-hw-9
 
   prometheus:
-    container_name: prometheus-ms-hw-7
+    container_name: prometheus-ms-hw-9
     image: prom/prometheus
     ports:
       - 9090:9090
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
     networks:
-      - ms-hw-7
+      - ms-hw-9
 
   postgres:
-    container_name: postgres-ms-hw-7
+    container_name: postgres-ms-hw-9
     image: postgres
     environment:
       POSTGRES_USER: postgres
@@ -72,7 +72,7 @@ services:
     volumes:
       - ./volumes/postgres/:/var/lib/postgresql/data
     networks:
-      - ms-hw-7
+      - ms-hw-9
     expose:
       - "5432"
     ports:
@@ -80,27 +80,27 @@ services:
     restart: unless-stopped
 
   postgres-exporter:
-    container_name: pg-exporter-ms-hw-7
+    container_name: pg-exporter-ms-hw-9
     image: prometheuscommunity/postgres-exporter
     ports:
       - 9187:9187
     environment:
       DATA_SOURCE_NAME: "postgresql://postgres:pass@postgres:5432/postgres?sslmode=disable"
     networks:
-      - ms-hw-7
+      - ms-hw-9
     links:
       - postgres
       - prometheus
 
   node_exporter:
-    container_name: node_exporter-ms-hw-7
+    container_name: node_exporter-ms-hw-9
     image: quay.io/prometheus/node-exporter:latest
     ports:
       - 9100:9100
     command:
       - '--path.rootfs=/host'
     networks:
-      - ms-hw-7
+      - ms-hw-9
     #network_mode: host
     pid: host
     restart: unless-stopped

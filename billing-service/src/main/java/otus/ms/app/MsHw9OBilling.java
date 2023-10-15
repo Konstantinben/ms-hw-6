@@ -6,10 +6,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableFeignClients
-public class MsHw7Order {
+public class MsHw9OBilling {
 
     public static void main(String[] args) {
-        SpringApplication.run(MsHw7Order.class, args);
+        SpringApplication.run(MsHw9OBilling.class, args);
     }
 
 }
