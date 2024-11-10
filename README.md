@@ -124,3 +124,4 @@ newman run ms-hw-9.postman.json
 ```bash
 kubectl port-forward services/my-release-postgresql 5432:5432 -n=default
 ```
+
